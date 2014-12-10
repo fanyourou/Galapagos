@@ -34,7 +34,9 @@ import
 
 import
   models.{ json, local => mlocal, core => mcore },
-    json.CompileWrites._,
+    json.{CompileWrites, WidgetReads},
+      CompileWrites._,
+      WidgetReads._,
     mcore.{ ModelsLibrary, Util },
       ModelsLibrary.prettyFilepath,
       Util.usingSource,
@@ -69,14 +71,21 @@ object CompilerService extends Controller {
       val argMap = toStringMap(request.extractBundle)
 
       val responseV = for {
+        widgets      <- parseWidgets(argMap.getOrElse("widgets", "[]"))
         modelStr     <- extractModelString(argMap, missingModelMsg)
-        modelResult  <- compileModel(modelStr, List())
+        modelResult  <- compileModel(modelStr, widgets)
         commands     <- getIDedStmtsV(argMap, commandsKey)
         reporters    <- getIDedStmtsV(argMap, reportersKey)
       } yield compile(modelResult, commands, reporters)
 
       responseV fold (nelResult(BadRequest), res => Ok(Json.toJson(res)))
     }
+
+  protected[controllers] def parseWidgets(json: String): ValidationNel[String, List[Widget]] =
+    Json.parse(json).validate[List[Widget]].fold(
+      errors  => errors.mkString("\n").failureNel,
+      widgets => widgets.successNel
+    )
 
   protected[controllers] def compile(modelResult: CompileResult[CompiledModel],
                                      commands:    IDedValues[String],
