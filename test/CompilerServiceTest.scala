@@ -17,7 +17,7 @@ import
 
 import
   play.api.{libs, test, http},
-    libs.json.Json,
+    libs.json.{Json, JsSuccess},
     test.{FakeRequest, Helpers},
     http.Status
 
@@ -124,7 +124,11 @@ class CompilerServiceTest extends PlaySpec {
       val widgetString = Json.toJson(modelResponse.widgets).toString
       widgetModel.fold(
         errs  => fail(errs.stream.mkString("\n")),
-        model => parseWidgets(widgetString) mustBe model.model.widgets
+        model => parseWidgets(widgetString).fold(
+          errs    => fail(errs.stream.mkString("\n")),
+          // The mkString("\n")s make failures easier to read.
+          widgets => widgets.mkString("\n") mustBe model.model.widgets.mkString("\n")
+        )
       )
     }
   }
