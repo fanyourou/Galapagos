@@ -62,7 +62,7 @@ class window.SessionLite
   recompile: ->
     world.clearAll();
     @widgetController.redraw()
-    compile('code', @widgetController.getCode(), [], [], @widgetController.widgets, (res) ->
+    compile('code', @widgetController.code(), [], [], @widgetController.widgets, (res) ->
       if res.model.success
         globalEval(res.model.result)
       else

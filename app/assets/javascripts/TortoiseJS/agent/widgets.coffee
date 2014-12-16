@@ -27,11 +27,14 @@ window.bindWidgets = (container, widgets, code, info) ->
   }
 
   ractive = new Ractive({
-    el:       container,
-    template: template,
-    partials: partials,
-    magic:    true,
-    data:     model
+    el:         container,
+    template:   template,
+    partials:   partials,
+    components: {
+      editor: EditorWidget
+    },
+    magic:      true,
+    data:       model
   })
 
   viewController = new AgentStreamController(container.querySelector('.netlogo-view-container'))
@@ -47,14 +50,11 @@ window.bindWidgets = (container, widgets, code, info) ->
     event.context.run()
   )
 
-  getCode = ->
-    container.querySelector('.netlogo-code').value
-
-  controller = new WidgetController(ractive, model, widgets, viewController, plotOps, getCode)
+  controller = new WidgetController(ractive, model, widgets, viewController, plotOps)
 
 
 class window.WidgetController
-  constructor: (@ractive, @model, @widgets, @viewController, @plotOps, @getCode) ->
+  constructor: (@ractive, @model, @widgets, @viewController, @plotOps) ->
 
   # () -> Unit
   runForevers: ->
@@ -104,6 +104,8 @@ class window.WidgetController
 
   # () -> Unit
   teardown: -> @ractive.teardown()
+
+  code: -> @ractive.data.code
 
 # ([widget], () -> Unit) -> WidgetController
 # Destructive - Adds everything for maintaining state to the widget models,
@@ -212,13 +214,7 @@ template =
     </div>
     <div class="netlogo-model-text">
       {{#showCode}}
-        <div class="netlogo-code-container">
-          <button class="netlogo-widget" on-click="recompile">compile</button>
-          <br/>
-          {{! Triple bars around code lets it use html formatting if it's there. }}
-          {{! The <pre> tags keep formmatting nice even if it's not html already. }}
-          <textarea class="netlogo-code" style="width: 100%" spellcheck="false">{{{code}}}</textarea>
-        </div>
+        <editor on-recompile="recompile" code='{{code}}'/>
       {{/}}
       {{#showInfo}}
         <div class="netlogo-info">{{{markdown(info)}}}</div>
