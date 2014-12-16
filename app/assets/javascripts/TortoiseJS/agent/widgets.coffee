@@ -34,7 +34,7 @@ window.bindWidgets = (container, widgets, code, info) ->
     data:     model
   })
 
-  viewController = new AgentStreamController(document.querySelector('.netlogo-view-container'))
+  viewController = new AgentStreamController(container.querySelector('.netlogo-view-container'))
 
   plotOps = createPlotOps(container, widgets)
 
@@ -47,11 +47,14 @@ window.bindWidgets = (container, widgets, code, info) ->
     event.context.run()
   )
 
-  controller = new WidgetController(ractive, model, widgets, viewController, plotOps)
+  getCode = ->
+    container.querySelector('.netlogo-code').value
+
+  controller = new WidgetController(ractive, model, widgets, viewController, plotOps, getCode)
 
 
 class window.WidgetController
-  constructor: (@ractive, @model, @widgets, @viewController, @plotOps) ->
+  constructor: (@ractive, @model, @widgets, @viewController, @plotOps, @getCode) ->
 
   # () -> Unit
   runForevers: ->
@@ -209,9 +212,13 @@ template =
     </div>
     <div class="netlogo-model-text">
       {{#showCode}}
-        {{! Triple bars around code lets it use html formatting if it's there. }}
-        {{! The <pre> tags keep formmatting nice even if it's not html already. }}
-        <pre class="netlogo-code">{{{code}}}</pre>
+        <div class="netlogo-code-container">
+          <button class="netlogo-widget" on-click="recompile">compile</button>
+          <br/>
+          {{! Triple bars around code lets it use html formatting if it's there. }}
+          {{! The <pre> tags keep formmatting nice even if it's not html already. }}
+          <textarea class="netlogo-code" style="width: 100%" spellcheck="false">{{{code}}}</textarea>
+        </div>
       {{/}}
       {{#showInfo}}
         <div class="netlogo-info">{{{markdown(info)}}}</div>
