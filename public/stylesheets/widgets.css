@@ -92,8 +92,11 @@
     font-family: monospace;
     overflow-x: scroll;
     border: inset;
-    min-height: 500px;
 }
+.netlogo-code .CodeMirror {
+    height: 500px;
+}
+
 .netlogo-info {
     flex: 1;
     -webkit-flex: 1;

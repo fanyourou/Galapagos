@@ -214,7 +214,7 @@ template =
     </div>
     <div class="netlogo-model-text">
       {{#showCode}}
-        <editor on-recompile="recompile" code='{{code}}'/>
+        <editor code='{{code}}'/>
       {{/}}
       {{#showInfo}}
         <div class="netlogo-info">{{{markdown(info)}}}</div>

@@ -13,7 +13,7 @@ class window.SessionLite
     @_eventLoopTimeout = -1
     @_lastRedraw = 0
     @_lastUpdate = 0
-    @widgetController.ractive.on('recompile', (event) => @recompile())
+    @widgetController.ractive.on('editor.recompile', (event) => @recompile())
 
   startLoop: ->
     @widgetController.updateWidgets()
@@ -60,6 +60,7 @@ class window.SessionLite
     cancelAnimationFrame(@_eventLoopTimeout)
 
   recompile: ->
+# This is a temporary workaround for the fact that models can't be reloaded without clearing the world
     world.clearAll();
     @widgetController.redraw()
     compile('code', @widgetController.code(), [], [], @widgetController.widgets, (res) ->
