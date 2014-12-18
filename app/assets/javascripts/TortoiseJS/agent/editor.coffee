@@ -512,11 +512,10 @@ reporters = [
 ].reverse() # Want reverse alphabetic so longer strings match first
 
 notWordCh = /[\s\[\(\]\)]/.source
-wordCh    = "[^#{notWordCh}]"
-wordStart = "(?=#{notWordCh}|^)"
+wordCh    = /[^\s\[\(\]\)]/.source
 wordEnd   = "(?=#{notWordCh}|$)"
 
-wordRegEx    = (pattern) -> new RegExp("#{wordStart}#{pattern}#{wordEnd}", 'i')
+wordRegEx    = (pattern) -> new RegExp("#{pattern}#{wordEnd}", 'i')
 memberRegEx  = (words)   -> wordRegEx("(?:#{words.join('|')})")
 
 # Rules for multiple states
@@ -531,9 +530,9 @@ CodeMirror.defineSimpleMode('netlogo', {
     {token: 'keyword', regex: memberRegEx(keywords)},
     {token: 'keyword', regex: wordRegEx("#{wordCh}*-own")},
     commentRule,
-    variable,
     openBracket,
-    closeBracket
+    closeBracket,
+    variable,
   ],
   body: [
     {token: 'keyword', regex: wordRegEx("end"), dedent: true, next: 'start'},
@@ -542,9 +541,9 @@ CodeMirror.defineSimpleMode('netlogo', {
     {token: 'string', regex: /"(?:[^\\]|\\.)*?"/},
     {token: 'number', regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i},
     commentRule,
-    #variable,
     openBracket,
-    closeBracket
+    closeBracket,
+    variable,
   ],
   meta: {
     electricChars: "d])D\n"
