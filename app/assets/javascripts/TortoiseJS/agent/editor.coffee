@@ -216,7 +216,7 @@ commands = [
   'with-local-randomness',
   'without-interruption',
   'write'
-]
+].reverse() # Want reverse alphabetic so longer strings match first
 
 reporters = [
   '!=',
@@ -509,30 +509,36 @@ reporters = [
   'THICKNESS',
   'SHAPE',
   'TIE-MODE'
-]
+].reverse() # Want reverse alphabetic so longer strings match first
+
+notWordCh = /[\s\[\(\]\)]/.source
+wordCh    = "[^#{notWordCh}]"
+wordStart = "(?=#{notWordCh}|^)"
+wordEnd   = "(?=#{notWordCh}|$)"
+
+wordRegEx    = (pattern) -> new RegExp("#{wordStart}#{pattern}#{wordEnd}", 'i')
+memberRegEx  = (words)   -> wordRegEx("(?:#{words.join('|')})")
 
 # Rules for multiple states
 commentRule  = {token: 'comment', regex: /;.*/}
 openBracket  = {regex: /[\[\(]/, indent: true}
 closeBracket = {regex: /[\]\)]/, dedent: true}
-variable     = {token: 'variable', regex: /[^\s\[\]\(\)]+/}
+variable     = {token: 'variable', regex: new RegExp(wordCh + "+")}
 
 CodeMirror.defineSimpleMode('netlogo', {
   start: [
-    {token: 'keyword', regex: /(?:to|to-report)\b/i, indent: true, next: 'body'},
-    {token: 'keyword', regex: new RegExp("(?:#{keywords.join('|')})\\b", 'i')},
-    {token: 'keyword', regex: /[^\s\(\)\[\]]*-own\b/i},
+    {token: 'keyword', regex: wordRegEx("to(?:-report)?"), indent: true, next: 'body'},
+    {token: 'keyword', regex: memberRegEx(keywords)},
+    {token: 'keyword', regex: wordRegEx("#{wordCh}*-own")},
     commentRule,
-    #variable,
+    variable,
     openBracket,
     closeBracket
   ],
   body: [
-    {token: 'keyword', regex: /end\b/i, dedent: true, next: 'start'},
-# Reverse because those lists are in alphabetic order and we want `if-else` to
-# appear before `if` so that "if-else" matches correctly. BCH 12/18/2014
-    {token: 'builtin', regex: new RegExp("(?:#{commands.reverse().join('|')})\\b", 'i')},
-    {token: 'variable-2', regex: new RegExp("(?:#{reporters.reverse().join('|')})\\b", 'i')},
+    {token: 'keyword', regex: wordRegEx("end"), dedent: true, next: 'start'},
+    {token: 'builtin', regex: memberRegEx(commands)},
+    {token: 'variable-2', regex: memberRegEx(reporters)},
     {token: 'string', regex: /"(?:[^\\]|\\.)*?"/},
     {token: 'number', regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i},
     commentRule,
