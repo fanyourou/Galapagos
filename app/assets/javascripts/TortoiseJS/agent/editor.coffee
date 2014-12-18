@@ -5,11 +5,7 @@ window.EditorWidget = Ractive.extend({
       tabSize: 2,
       mode: 'netlogo'
     })
-  # See https://github.com/codemirror/CodeMirror/issues/2991 on why we need to
-  # set this directly. BCH 12/17/2014
-    editor.getMode().electricChars ="d])D\n"
     editor.on('change', =>
-      console.log('change')
       @set('code', editor.getValue())
     )
 
@@ -765,7 +761,8 @@ CodeMirror.defineSimpleMode('netlogo', {
     {token: 'number', regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i},
     {regex: /[\[\(]/, indent: true}
     {regex: /[\]\)]/, dedent: true}
-  ]
-}, {
-  electricChars: "d])D\n" # This is actually ignored: https://github.com/codemirror/CodeMirror/issues/2991
+  ],
+  meta: {
+    electricChars: "d])D\n"
+  }
 })
