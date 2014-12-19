@@ -3,7 +3,8 @@ window.EditorWidget = Ractive.extend({
     window.editor = CodeMirror(@find('.netlogo-code'), {
       value: @get('code'),
       tabSize: 2,
-      mode: 'netlogo'
+      mode: 'netlogo',
+      theme: 'netlogo-default'
     })
     editor.on('change', =>
       @set('code', editor.getValue())
@@ -535,11 +536,11 @@ CodeMirror.defineSimpleMode('netlogo', {
     variable,
   ],
   body: [
-    {token: 'keyword', regex: wordRegEx("end"), dedent: true, next: 'start'},
-    {token: 'builtin', regex: memberRegEx(commands)},
-    {token: 'variable-2', regex: memberRegEx(reporters)},
-    {token: 'string', regex: /"(?:[^\\]|\\.)*?"/},
-    {token: 'number', regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i},
+    {token: 'keyword',  regex: wordRegEx("end"), dedent: true, next: 'start'},
+    {token: 'command',  regex: memberRegEx(commands)},
+    {token: 'reporter', regex: memberRegEx(reporters)},
+    {token: 'string',   regex: /"(?:[^\\]|\\.)*?"/},
+    {token: 'number',   regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i},
     commentRule,
     openBracket,
     closeBracket,
