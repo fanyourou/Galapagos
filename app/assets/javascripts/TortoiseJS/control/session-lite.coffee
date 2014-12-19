@@ -75,8 +75,8 @@ window.Tortoise = {
   fromURL:           (url,   container, callback) ->
     compile("url",   url,   [], [], [], makeCompileCallback(container, callback))
 
-  fromCompiledModel: (container, widgets, code, info, compiledSource = "") ->
-    widgetController = bindWidgets(container, widgets, code, info)
+  fromCompiledModel: (container, widgets, code, info, compiledSource = "", readOnly = false) ->
+    widgetController = bindWidgets(container, widgets, code, info, readOnly)
     window.modelConfig ?= {}
     modelConfig.plotOps = widgetController.plotOps
     globalEval(compiledSource)

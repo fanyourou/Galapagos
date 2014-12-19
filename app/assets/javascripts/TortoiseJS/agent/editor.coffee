@@ -1,10 +1,12 @@
 window.EditorWidget = Ractive.extend({
   onrender: ->
+    console.log(@get('readOnly'))
     window.editor = CodeMirror(@find('.netlogo-code'), {
       value: @get('code'),
       tabSize: 2,
       mode: 'netlogo',
-      theme: 'netlogo-default'
+      theme: 'netlogo-default',
+      readOnly: @get('readOnly')
     })
     editor.on('change', =>
       @set('code', editor.getValue())

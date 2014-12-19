@@ -1,5 +1,5 @@
 # (Element or string, [widget], string, string) -> WidgetController
-window.bindWidgets = (container, widgets, code, info) ->
+window.bindWidgets = (container, widgets, code, info, readOnly) ->
   if typeof container == 'string'
     container = document.querySelector(container)
 
@@ -23,6 +23,7 @@ window.bindWidgets = (container, widgets, code, info) ->
     height:   Math.max.apply(Math, (w.bottom for w in widgets)),
     code,
     info,
+    readOnly,
     markdown: markdown.toHTML
   }
 
@@ -214,7 +215,7 @@ template =
     </div>
     <div class="netlogo-model-text">
       {{#showCode}}
-        <editor code='{{code}}'/>
+        <editor code='{{code}}' readOnly='{{readOnly}}' />
       {{/}}
       {{#showInfo}}
         <div class="netlogo-info">{{{markdown(info)}}}</div>
