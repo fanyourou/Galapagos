@@ -512,6 +512,30 @@ reporters = [
   'TIE-MODE'
 ].reverse() # Want reverse alphabetic so longer strings match first
 
+constants = [
+  'TRUE',
+  'FALSE',
+  'NOBODY',
+  'E',
+  'PI',
+  'gray',
+  'grey',
+  'red',
+  'orange',
+  'brown',
+  'yellow',
+  'green',
+  'lime',
+  'turquoise',
+  'cyan',
+  'sky',
+  'blue',
+  'violet',
+  'magenta',
+  'pink',
+  'black',
+  'white'
+]
 notWordCh = /[\s\[\(\]\)]/.source
 wordCh    = /[^\s\[\(\]\)]/.source
 wordEnd   = "(?=#{notWordCh}|$)"
@@ -521,6 +545,7 @@ memberRegEx  = (words)   -> wordRegEx("(?:#{words.join('|')})")
 
 # Rules for multiple states
 commentRule  = {token: 'comment', regex: /;.*/}
+constantRule = {token: 'constant', regex: memberRegEx(constants)}
 openBracket  = {regex: /[\[\(]/, indent: true}
 closeBracket = {regex: /[\]\)]/, dedent: true}
 variable     = {token: 'variable', regex: new RegExp(wordCh + "+")}
@@ -530,6 +555,7 @@ CodeMirror.defineSimpleMode('netlogo', {
     {token: 'keyword', regex: wordRegEx("to(?:-report)?"), indent: true, next: 'body'},
     {token: 'keyword', regex: memberRegEx(keywords)},
     {token: 'keyword', regex: wordRegEx("#{wordCh}*-own")},
+    constantRule,
     commentRule,
     openBracket,
     closeBracket,
@@ -541,6 +567,7 @@ CodeMirror.defineSimpleMode('netlogo', {
     {token: 'reporter', regex: memberRegEx(reporters)},
     {token: 'string',   regex: /"(?:[^\\]|\\.)*?"/},
     {token: 'number',   regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i},
+    constantRule,
     commentRule,
     openBracket,
     closeBracket,
